@@ -1,12 +1,16 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import {decrement, increment} from "./Wallets/wallet";
 import './ExchangeStyles.css';
 
 function ExchangeComponent() {
 
-    const [walletGBP, setWalletGBP] = useState(2000)
-    const [walletEUR, setWalletEUR] = useState(2500)
-    const [walletUSD, setWalletUSD] = useState(3000)
+    const gbp = useSelector((state) => state.GBP)
+    const eur = useSelector((state) => state.EUR)
+    const usd = useSelector((state) => state.USD)
+    const dispatch = useDispatch()
+
     const [value, setValue] = useState('GBP')
 
     const handleChange = (event) => {
