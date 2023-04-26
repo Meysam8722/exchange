@@ -40,7 +40,10 @@ function ExchangeComponent() {
     }
 
     const handleInput = (event) => {
-        setUserInput(event.target.value)
+        const validated = event.target.value.match(/^(\d*\.{0,1}\d{0,2}$)/)
+        if (validated) {
+            setUserInput(event.target.value)
+        }
     }
 
     const handleChange = (event) => {
