@@ -1,17 +1,47 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import {decrement, increment} from "./Wallets/wallet";
+import {decrementGBP, incrementGBP} from "./Wallets/walletGBP";
+import {incrementEUR, decrementEUR} from "./Wallets/walletEUR";
+import {incrementUSD, decrementUSD} from "./Wallets/walletUSD";
+import {increment, decrement} from "../features/counter/counterSlice";
+import axios from "axios";
 import './ExchangeStyles.css';
 
 function ExchangeComponent() {
 
-    const gbp = useSelector((state) => state.GBP)
-    const eur = useSelector((state) => state.EUR)
-    const usd = useSelector((state) => state.USD)
+    const [userInput, setUserInput] = useState(0)
+    const gbp = useSelector((state) => state.GBP.value)
+    const eur = useSelector((state) => state.EUR.value)
+    const usd = useSelector((state) => state.USD.value)
+    let counter = useSelector((state) => state.counter.value)
     const dispatch = useDispatch()
 
     const [value, setValue] = useState('GBP')
+
+    let wallet = {
+        GBP: gbp,
+        EUR: eur,
+        USD: usd,
+    }
+
+    const MINUTE_MS = 5000;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log('salam');
+        }, MINUTE_MS);
+        console.log(gbp)
+        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    }, [gbp])
+
+    const getExchangeRate = async () => {
+        await axios.get('https://openexchangerates.org/api/', )
+    }
+
+    const handleInput = (event) => {
+        setUserInput(event.target.value)
+    }
 
     const handleChange = (event) => {
         setValue(event.target.value)
@@ -25,24 +55,28 @@ function ExchangeComponent() {
     return (
         <div className="container">
             <div className="currency">
-                <form onSubmit={handleSubmit}>
+                <div>
                     <select value={value} onChange={handleChange}>
                         <option value="GBP">Grapefruit</option>
                         <option value="EUR">Lime</option>
                         <option value="USD">Coconut</option>
                     </select>
-                </form>
+                </div>
+                <input type="number" value={userInput} onInput={handleInput} />
             </div>
             <div className="currency currency--to">
-                <form onSubmit={handleSubmit}>
+                <div>
                     <select value={value} onChange={handleChange}>
                         <option value="GBP">Grapefruit</option>
                         <option value="EUR">Lime</option>
                         <option value="USD">Coconut</option>
                     </select>
-                </form>
+                </div>
+                <div>{userInput * 1000}</div>
             </div>
-            <input type="submit" value="Submit" />
+            <button onClick={() => dispatch(incrementGBP(1000))}>
+                Exchange
+            </button>
         </div>
     );
 }
