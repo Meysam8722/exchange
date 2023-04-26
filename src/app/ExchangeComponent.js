@@ -77,7 +77,12 @@ function ExchangeComponent() {
                 </div>
                 <input type="number" value={userInput} onInput={handleInput} />
             </div>
-            <button></button>
+            <button onClick={() => {
+                fetch("https://api.apilayer.com/exchangerates_data/convert?to=USD&from=EUR&amount=5", requestOptions)
+                    .then(response => response.text())
+                    .then(result => console.log(result))
+                    .catch(error => console.log('error', error));
+            }}>fetch</button>
             <div className="currency currency--to">
                 <div>
                     <select value={value} onChange={handleChange}>
