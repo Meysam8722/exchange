@@ -18,3 +18,13 @@
     justify-content: center;
     align-items: center;
 }
+
+.from-currency {
+    display: flex;
+    flex-direction: column;
+}
+
+.to-currency {
+    display: flex;
+    flex-direction: column;
+}

@@ -10,28 +10,30 @@ import './ExchangeStyles.css';
 
 function ExchangeComponent() {
 
-    const [userInput, setUserInput] = useState(0)
-    const [exchangeRate, setExchangeRate] = useState(0)
-    const [output, setOutput] = useState(0)
+
     const gbp = useSelector((state) => state.GBP.value)
     const eur = useSelector((state) => state.EUR.value)
     const usd = useSelector((state) => state.USD.value)
     let counter = useSelector((state) => state.counter.value)
     const dispatch = useDispatch()
 
+    const [userInput, setUserInput] = useState(0)
+    const [exchangeRate, setExchangeRate] = useState(1)
+    const [output, setOutput] = useState(0)
     const [fromCurrency, setFromCurrency] = useState('GBP')
     const [toCurrency, setToCurrency] = useState('GBP')
     const [fromCurrencies, setFromCurrencies] = useState(['GBP', 'EUR', 'USD'])
     const [toCurrencies, setToCurrencies] = useState(['GBP', 'EUR', 'USD'])
+    const [wrongInput, setWrongInput] = useState(false)
 
     let wallet = {
-        GBP: gbp,
-        EUR: eur,
-        USD: usd,
+        'GBP': gbp,
+        'EUR': eur,
+        'USD': usd,
     }
 
     let myHeaders = new Headers();
-    myHeaders.append("apikey", "ngmk0WtVMcEePnU6QNOALv6sZODbVYL5");
+    myHeaders.append("apikey", "GqtkFGXsFQ97XXM482FrbovFAgobz0Ep");
 
     let requestOptions = {
         method: 'GET',
@@ -57,6 +59,7 @@ function ExchangeComponent() {
             .then(result => {
                 console.log(JSON.parse(result).info.rate)
                 setExchangeRate(JSON.parse(result).info.rate)
+                setOutput(exchangeRate * userInput)
                 console.log(exchangeRate)
             })
             .catch(error => console.log('error', error));
@@ -84,30 +87,66 @@ function ExchangeComponent() {
         setFromCurrencies(copyOfFromCurrencies)
     }
 
+    const handleExchange = () => {
+        if(userInput > wallet[fromCurrency]) {
+            setWrongInput(true)
+            alert('Your input exceeded your budget!')
+            return
+        }
+        switch (fromCurrency) {
+            case 'GBP':
+                dispatch(decrementGBP(userInput))
+                break;
+            case 'EUR':
+                dispatch(decrementEUR(userInput))
+                break;
+            case 'USD':
+                dispatch(decrementUSD(userInput))
+                break;
+            default:
+                break;
+        }
+        switch (toCurrency) {
+            case 'GBP':
+                dispatch(incrementGBP(output))
+                break;
+            case 'EUR':
+                dispatch(incrementEUR(output))
+                break;
+            case 'USD':
+                dispatch(incrementUSD(output))
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <div className="container">
             <div className="currency">
-                <div>
+                <div className="from-currency">
                     <select value={fromCurrency} onChange={handleFromChange}>
                         {fromCurrencies.map((item) =>
                             <option value={item} key={item}>{item}</option>
                         )}
                     </select>
+                    <span>{wallet[fromCurrency]}</span>
                 </div>
                 <input type="number" value={userInput} onInput={handleInput} />
             </div>
             <button onClick={() => getExchangeRate()}>fetch</button>
             <div className="currency currency--to">
-                <div>
+                <div className="to-currency">
                     <select value={toCurrency} onChange={handleToChange}>
                         {toCurrencies.map((item) =>
                             <option value={item} key={item}>{item}</option>
                         )}
                     </select>
+                    <span>{wallet[toCurrency]}</span>
                 </div>
                 <span>{output}</span>
             </div>
-            <button onClick={() => dispatch(incrementGBP(1000))}>
+            <button onClick={() => handleExchange()}>
                 Exchange
             </button>
         </div>
