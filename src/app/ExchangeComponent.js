@@ -11,13 +11,18 @@ import './ExchangeStyles.css';
 function ExchangeComponent() {
 
     const [userInput, setUserInput] = useState(0)
+    const [exchangeRate, setExchangeRate] = useState(0)
+    const [output, setOutput] = useState(0)
     const gbp = useSelector((state) => state.GBP.value)
     const eur = useSelector((state) => state.EUR.value)
     const usd = useSelector((state) => state.USD.value)
     let counter = useSelector((state) => state.counter.value)
     const dispatch = useDispatch()
 
-    const [value, setValue] = useState('GBP')
+    const [fromCurrency, setFromCurrency] = useState('GBP')
+    const [toCurrency, setToCurrency] = useState('GBP')
+    const [fromCurrencies, setFromCurrencies] = useState(['GBP', 'EUR', 'USD'])
+    const [toCurrencies, setToCurrencies] = useState(['GBP', 'EUR', 'USD'])
 
     let wallet = {
         GBP: gbp,
@@ -39,59 +44,68 @@ function ExchangeComponent() {
     useEffect(() => {
         const interval = setInterval(() => {
             // console.log('salam');
-            // fetch("https://api.apilayer.com/exchangerates_data/convert?to=USD&from=EUR&amount=5", requestOptions)
-            //     .then(response => response.text())
-            //     .then(result => console.log(result))
-            //     .catch(error => console.log('error', error));
+            // getExchangeRate()
         }, MINUTE_MS);
-        console.log(gbp)
-        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-    }, [gbp])
+        getExchangeRate()
+        return () => clearInterval(interval);
+// This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    }, [gbp, fromCurrency, toCurrency, exchangeRate])
 
+    const getExchangeRate = () => {
+        fetch(`https://api.apilayer.com/exchangerates_data/convert?to=${toCurrency}&from=${fromCurrency}&amount=${userInput}`, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log(JSON.parse(result).info.rate)
+                setExchangeRate(JSON.parse(result).info.rate)
+                console.log(exchangeRate)
+            })
+            .catch(error => console.log('error', error));
+    }
 
     const handleInput = (event) => {
         const validated = event.target.value.match(/^(\d*\.{0,1}\d{0,2}$)/)
         if (validated) {
             setUserInput(event.target.value)
         }
+        setOutput(exchangeRate * event.target.value)
     }
 
-    const handleChange = (event) => {
-        setValue(event.target.value)
+    const handleFromChange = (event) => {
+        setFromCurrency(event.target.value)
+        let copyOfToCurrencies = toCurrencies
+        copyOfToCurrencies.filter((item) => item !== fromCurrency)
+        setToCurrencies(copyOfToCurrencies)
     }
 
-    const handleSubmit = (event) => {
-        alert('Your favorite flavor is: ' + value);
-        event.preventDefault();
+    const handleToChange = (event) => {
+        setToCurrency(event.target.value)
+        let copyOfFromCurrencies = fromCurrencies
+        copyOfFromCurrencies.filter((item) => item !== toCurrency)
+        setFromCurrencies(copyOfFromCurrencies)
     }
 
     return (
         <div className="container">
             <div className="currency">
                 <div>
-                    <select value={value} onChange={handleChange}>
-                        <option value="GBP">Grapefruit</option>
-                        <option value="EUR">Lime</option>
-                        <option value="USD">Coconut</option>
+                    <select value={fromCurrency} onChange={handleFromChange}>
+                        {fromCurrencies.map((item) =>
+                            <option value={item} key={item}>{item}</option>
+                        )}
                     </select>
                 </div>
                 <input type="number" value={userInput} onInput={handleInput} />
             </div>
-            <button onClick={() => {
-                fetch("https://api.apilayer.com/exchangerates_data/convert?to=USD&from=EUR&amount=5", requestOptions)
-                    .then(response => response.text())
-                    .then(result => console.log(result))
-                    .catch(error => console.log('error', error));
-            }}>fetch</button>
+            <button onClick={() => getExchangeRate()}>fetch</button>
             <div className="currency currency--to">
                 <div>
-                    <select value={value} onChange={handleChange}>
-                        <option value="GBP">Grapefruit</option>
-                        <option value="EUR">Lime</option>
-                        <option value="USD">Coconut</option>
+                    <select value={toCurrency} onChange={handleToChange}>
+                        {toCurrencies.map((item) =>
+                            <option value={item} key={item}>{item}</option>
+                        )}
                     </select>
                 </div>
-                <div>{userInput * 1000}</div>
+                <span>{output}</span>
             </div>
             <button onClick={() => dispatch(incrementGBP(1000))}>
                 Exchange
