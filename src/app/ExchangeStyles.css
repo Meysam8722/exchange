@@ -67,6 +67,7 @@
     align-items: center;
     z-index: 1;
     margin-bottom: -17px;
+    width: 80%;
 }
 
 .exchange-rate {

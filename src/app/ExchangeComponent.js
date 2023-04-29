@@ -4,11 +4,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import {decrementGBP, incrementGBP} from "./Wallets/walletGBP";
 import {incrementEUR, decrementEUR} from "./Wallets/walletEUR";
 import {incrementUSD, decrementUSD} from "./Wallets/walletUSD";
-import {increment, decrement} from "../features/counter/counterSlice";
-import axios from "axios";
 import './ExchangeStyles.css';
 import {BiTransfer} from "react-icons/bi";
-import {GrLineChart} from "react-icons/gr";
 import {BsGraphUpArrow} from "react-icons/bs";
 import {IconContext} from "react-icons";
 
@@ -18,7 +15,6 @@ function ExchangeComponent() {
     const gbp = useSelector((state) => state.GBP.value)
     const eur = useSelector((state) => state.EUR.value)
     const usd = useSelector((state) => state.USD.value)
-    let counter = useSelector((state) => state.counter.value)
     const dispatch = useDispatch()
 
     const [userInput, setUserInput] = useState(0)
@@ -50,10 +46,9 @@ function ExchangeComponent() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            // console.log('salam');
-            // getExchangeRate()
+            getExchangeRate()
         }, MINUTE_MS);
-        //getExchangeRate()
+        getExchangeRate()
         return () => clearInterval(interval);
 // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
     }, [gbp, fromCurrency, toCurrency, exchangeRate])
