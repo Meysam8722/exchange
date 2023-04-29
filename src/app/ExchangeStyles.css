@@ -5,6 +5,8 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
     align-items: center;
 }
 
@@ -17,6 +19,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: fit-content;
 }
 
 .from-currency {
@@ -27,4 +30,62 @@
 .to-currency {
     display: flex;
     flex-direction: column;
+}
+
+.exchange {
+    margin-top: 20px;
+    border-radius: 20px;
+    padding: 10px;
+    color: white;
+    background-color: blueviolet;
+    border: none;
+    font-size: 20px;
+}
+
+.vertical {
+    rotate: 90deg;
+}
+
+.fetch-button {
+    border-radius: 50%;
+    border: solid 1px lightgray;
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-right: 100px;
+    align-items: center;
+
+}
+
+.mid-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 1;
+    margin-bottom: -17px;
+}
+
+.exchange-rate {
+    border: solid 1px lightgray;
+    background-color: white;
+    border-radius: 20px;
+    color: blueviolet;
+    margin-left: auto;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+select {
+    height: 30px;
+    background-color: transparent;
+    border: none;
+}
+
+input {
+    height: 20px;
 }

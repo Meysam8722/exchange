@@ -7,6 +7,10 @@ import {incrementUSD, decrementUSD} from "./Wallets/walletUSD";
 import {increment, decrement} from "../features/counter/counterSlice";
 import axios from "axios";
 import './ExchangeStyles.css';
+import {BiTransfer} from "react-icons/bi";
+import {GrLineChart} from "react-icons/gr";
+import {BsGraphUpArrow} from "react-icons/bs";
+import {IconContext} from "react-icons";
 
 function ExchangeComponent() {
 
@@ -21,10 +25,11 @@ function ExchangeComponent() {
     const [exchangeRate, setExchangeRate] = useState(1)
     const [output, setOutput] = useState(0)
     const [fromCurrency, setFromCurrency] = useState('GBP')
+    const [fromCurrencySymbol, setFromCurrencySymbol] = useState('£')
     const [toCurrency, setToCurrency] = useState('GBP')
+    const [toCurrencySymbol, setToCurrencySymbol] = useState('£')
     const [fromCurrencies, setFromCurrencies] = useState(['GBP', 'EUR', 'USD'])
     const [toCurrencies, setToCurrencies] = useState(['GBP', 'EUR', 'USD'])
-    const [wrongInput, setWrongInput] = useState(false)
 
     let wallet = {
         'GBP': gbp,
@@ -33,7 +38,7 @@ function ExchangeComponent() {
     }
 
     let myHeaders = new Headers();
-    myHeaders.append("apikey", "GqtkFGXsFQ97XXM482FrbovFAgobz0Ep");
+    myHeaders.append("apikey", "ZcWd2oc9O1xB0vGqLK1rSDO5Gi53jln3");
 
     let requestOptions = {
         method: 'GET',
@@ -48,7 +53,7 @@ function ExchangeComponent() {
             // console.log('salam');
             // getExchangeRate()
         }, MINUTE_MS);
-        getExchangeRate()
+        //getExchangeRate()
         return () => clearInterval(interval);
 // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
     }, [gbp, fromCurrency, toCurrency, exchangeRate])
@@ -78,6 +83,8 @@ function ExchangeComponent() {
         let copyOfToCurrencies = toCurrencies
         copyOfToCurrencies.filter((item) => item !== fromCurrency)
         setToCurrencies(copyOfToCurrencies)
+        setFromCurrencySymbol(changeCurrencySymbol(event.target.value))
+
     }
 
     const handleToChange = (event) => {
@@ -85,11 +92,23 @@ function ExchangeComponent() {
         let copyOfFromCurrencies = fromCurrencies
         copyOfFromCurrencies.filter((item) => item !== toCurrency)
         setFromCurrencies(copyOfFromCurrencies)
+        setToCurrencySymbol(changeCurrencySymbol(event.target.value))
+
+    }
+
+    const changeCurrencySymbol = (currency) => {
+        switch (currency) {
+            case 'GBP':
+                return '£'
+            case 'USD':
+                return '$'
+            case 'EUR':
+                return '€'
+        }
     }
 
     const handleExchange = () => {
         if(userInput > wallet[fromCurrency]) {
-            setWrongInput(true)
             alert('Your input exceeded your budget!')
             return
         }
@@ -122,34 +141,49 @@ function ExchangeComponent() {
     }
 
     return (
-        <div className="container">
-            <div className="currency">
-                <div className="from-currency">
-                    <select value={fromCurrency} onChange={handleFromChange}>
-                        {fromCurrencies.map((item) =>
-                            <option value={item} key={item}>{item}</option>
-                        )}
-                    </select>
-                    <span>{wallet[fromCurrency]}</span>
+        <IconContext.Provider
+            value={{ color: 'blueViolet'}}
+        >
+            <div className="container">
+                <div className="currency">
+                    <div className="from-currency">
+                        <select value={fromCurrency} onChange={handleFromChange}>
+                            {fromCurrencies.map((item) =>
+                                <option value={item} key={item}>{item}</option>
+                            )}
+                        </select>
+                        <span>{fromCurrencySymbol + wallet[fromCurrency].toString()}</span>
+                    </div>
+                    <input type="number" value={userInput} onInput={handleInput} />
                 </div>
-                <input type="number" value={userInput} onInput={handleInput} />
-            </div>
-            <button onClick={() => getExchangeRate()}>fetch</button>
-            <div className="currency currency--to">
-                <div className="to-currency">
-                    <select value={toCurrency} onChange={handleToChange}>
-                        {toCurrencies.map((item) =>
-                            <option value={item} key={item}>{item}</option>
-                        )}
-                    </select>
-                    <span>{wallet[toCurrency]}</span>
+                <div className="mid-section">
+                    <button className="fetch-button" onClick={() => getExchangeRate()}>
+                        <BiTransfer className="vertical" size="25px"/>
+                    </button>
+                    <div className="exchange-rate">
+                        <BsGraphUpArrow/>
+                        <span>
+                        {` 1 ${fromCurrencySymbol} = ${exchangeRate} ${toCurrencySymbol}`}
+                    </span>
+                    </div>
                 </div>
-                <span>{output}</span>
+                <div className="currency currency--to">
+                    <div className="to-currency">
+                        <select value={toCurrency} onChange={handleToChange}>
+                            {toCurrencies.map((item) =>
+                                <option value={item} key={item}>{item}</option>
+                            )}
+                        </select>
+                        <span>{toCurrencySymbol + wallet[toCurrency].toString()}</span>
+                    </div>
+                    <span>{output}</span>
+                </div>
+                <button className="exchange" onClick={() => handleExchange()}>
+                    Exchange
+                </button>
             </div>
-            <button onClick={() => handleExchange()}>
-                Exchange
-            </button>
-        </div>
+        </IconContext.Provider>
+
     );
 }
 export default ExchangeComponent;
