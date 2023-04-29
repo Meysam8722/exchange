@@ -22,12 +22,8 @@
     width: fit-content;
 }
 
-.from-currency {
-    display: flex;
-    flex-direction: column;
-}
 
-.to-currency {
+.sub-currency {
     display: flex;
     flex-direction: column;
 }

@@ -141,7 +141,7 @@ function ExchangeComponent() {
         >
             <div className="container">
                 <div className="currency">
-                    <div className="from-currency">
+                    <div className="sub-currency">
                         <select value={fromCurrency} onChange={handleFromChange}>
                             {fromCurrencies.map((item) =>
                                 <option value={item} key={item}>{item}</option>
@@ -163,7 +163,7 @@ function ExchangeComponent() {
                     </div>
                 </div>
                 <div className="currency currency--to">
-                    <div className="to-currency">
+                    <div className="sub-currency">
                         <select value={toCurrency} onChange={handleToChange}>
                             {toCurrencies.map((item) =>
                                 <option value={item} key={item}>{item}</option>
