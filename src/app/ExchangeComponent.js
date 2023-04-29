@@ -76,19 +76,21 @@ function ExchangeComponent() {
     const handleFromChange = (event) => {
         setFromCurrency(event.target.value)
         let copyOfToCurrencies = toCurrencies
-        copyOfToCurrencies.filter((item) => item !== fromCurrency)
+        copyOfToCurrencies.filter((item) => {
+            return item !== event.target.value
+        })
         setToCurrencies(copyOfToCurrencies)
         setFromCurrencySymbol(changeCurrencySymbol(event.target.value))
-
     }
 
     const handleToChange = (event) => {
         setToCurrency(event.target.value)
         let copyOfFromCurrencies = fromCurrencies
-        copyOfFromCurrencies.filter((item) => item !== toCurrency)
+        copyOfFromCurrencies.filter((item) => {
+            return item !== event.target.value
+        })
         setFromCurrencies(copyOfFromCurrencies)
         setToCurrencySymbol(changeCurrencySymbol(event.target.value))
-
     }
 
     const changeCurrencySymbol = (currency) => {
@@ -99,6 +101,8 @@ function ExchangeComponent() {
                 return '$'
             case 'EUR':
                 return '€'
+            default:
+                return ''
         }
     }
 
